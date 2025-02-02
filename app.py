@@ -1,28 +1,40 @@
- 
 import streamlit as st
-from PIL import Image
+from PIL import Image, ImageFilter, ImageOps
 import pytesseract
 from pdf2image import convert_from_path
+import cv2
+import numpy as np
 import os
 
-# Set Tesseract CMD path
-#pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# OCR functions with preprocessing
+def preprocess_image(image):
+    # Convert image to grayscale
+    gray_image = ImageOps.grayscale(image)
+    
+    # Apply thresholding to improve text visibility
+    np_image = np.array(gray_image)
+    _, thresholded = cv2.threshold(np_image, 150, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    
+    # Convert back to PIL Image
+    processed_image = Image.fromarray(thresholded)
+    return processed_image
 
-# OCR functions
 def ocr_image(image):
-    text = pytesseract.image_to_string(image)
+    processed_image = preprocess_image(image)
+    text = pytesseract.image_to_string(processed_image, config='--psm 6 --oem 3')
     return text
 
 def ocr_pdf(pdf_file):
     images = convert_from_path(pdf_file)
     text = ''
     for image in images:
-        text += pytesseract.image_to_string(image)
+        processed_image = preprocess_image(image)
+        text += pytesseract.image_to_string(processed_image, config='--psm 6 --oem 3')
     return text
 
 # Streamlit App
-st.title("OCR App for Images and PDFs")
-st.write("Upload an image or a PDF to extract text.")
+st.title("OCR App for Images and PDFs (Supports Handwritten Notes)")
+st.write("Upload an image or a PDF to extract text, including handwritten notes.")
 
 uploaded_file = st.file_uploader("Choose an Image or PDF", type=["png", "jpg", "jpeg", "pdf"])
 

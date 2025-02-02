@@ -4,3 +4,4 @@ pytesseract
 pdf2image
 tesseract
 poppler-utils
+opencv-python
