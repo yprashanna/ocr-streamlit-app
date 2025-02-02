@@ -6,8 +6,8 @@ import numpy as np
 import os
 from transformers import pipeline
 
-# Load NLP model for post-processing
-nlp = pipeline("text2text-generation", model="t5-small")
+# Load lightweight NLP model for post-processing
+nlp = pipeline("text2text-generation", model="sshleifer/tiny-mbart")
 
 # Custom CSS for sleek UI
 st.markdown("""
