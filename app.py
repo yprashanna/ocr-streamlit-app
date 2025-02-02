@@ -1,8 +1,7 @@
 import streamlit as st
-from PIL import Image, ImageFilter, ImageOps
+from PIL import Image, ImageOps
 import pytesseract
 from pdf2image import convert_from_path
-import cv2
 import numpy as np
 import os
 
@@ -11,9 +10,9 @@ def preprocess_image(image):
     # Convert image to grayscale
     gray_image = ImageOps.grayscale(image)
     
-    # Apply thresholding to improve text visibility
+    # Apply simple thresholding using NumPy
     np_image = np.array(gray_image)
-    _, thresholded = cv2.threshold(np_image, 150, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    thresholded = np.where(np_image > 150, 255, 0).astype(np.uint8)
     
     # Convert back to PIL Image
     processed_image = Image.fromarray(thresholded)

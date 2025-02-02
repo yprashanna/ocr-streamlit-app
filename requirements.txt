@@ -1,7 +1,5 @@
 streamlit
-pillow
 pytesseract
 pdf2image
-tesseract
-poppler-utils
-opencv-python
+Pillow
+numpy
